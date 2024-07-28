@@ -20,6 +20,12 @@ namespace WebAtividadeEntrevista.Models
         public string CEP { get; set; }
 
         /// <summary>
+        /// CPF
+        /// </summary>
+        [Required]
+        public string CPF { get; set; }
+
+        /// <summary>
         /// Cidade
         /// </summary>
         [Required]
