@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using FI.AtividadeEntrevista.DML;
+using System.Net;
 
 namespace WebAtividadeEntrevista.Controllers
 {
@@ -38,10 +39,17 @@ namespace WebAtividadeEntrevista.Controllers
             }
             else
             {
-                
+                //Verifica se existe outro CPF igual no sistema
+                if (bo.VerificarExistencia(model.CPF))
+                {
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    return Json("Já Existe um usuario com o CPF inserido!!");
+                }
+
                 model.Id = bo.Incluir(new Cliente()
                 {                    
                     CEP = model.CEP,
+                    CPF = model.CPF,
                     Cidade = model.Cidade,
                     Email = model.Email,
                     Estado = model.Estado,
@@ -73,10 +81,23 @@ namespace WebAtividadeEntrevista.Controllers
             }
             else
             {
+                Cliente cliente = bo.Consultar(model.Id);
+
+                if (cliente != null && cliente.CPF != model.CPF)
+                {
+                    //Verifica se existe outro CPF igual no sistema
+                    if (bo.VerificarExistencia(model.CPF))
+                    {
+                        Response.StatusCode = (int) HttpStatusCode.BadRequest;
+                        return Json("Já Existe um usuario com o CPF inserido!!" );
+                    }
+                }
+
                 bo.Alterar(new Cliente()
                 {
                     Id = model.Id,
                     CEP = model.CEP,
+                    CPF = model.CPF,
                     Cidade = model.Cidade,
                     Email = model.Email,
                     Estado = model.Estado,
@@ -104,6 +125,7 @@ namespace WebAtividadeEntrevista.Controllers
                 {
                     Id = cliente.Id,
                     CEP = cliente.CEP,
+                    CPF = cliente.CPF,
                     Cidade = cliente.Cidade,
                     Email = cliente.Email,
                     Estado = cliente.Estado,

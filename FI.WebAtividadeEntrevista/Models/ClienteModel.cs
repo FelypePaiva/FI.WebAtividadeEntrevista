@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FI.WebAtividadeEntrevista.AtributoValidacao;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -23,6 +24,7 @@ namespace WebAtividadeEntrevista.Models
         /// CPF
         /// </summary>
         [Required]
+        [CPF]
         public string CPF { get; set; }
 
         /// <summary>
