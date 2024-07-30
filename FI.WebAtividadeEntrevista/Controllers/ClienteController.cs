@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using FI.AtividadeEntrevista.DML;
 using System.Net;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebAtividadeEntrevista.Controllers
 {
@@ -27,15 +28,24 @@ namespace WebAtividadeEntrevista.Controllers
         public JsonResult Incluir(ClienteModel model)
         {
             BoCliente bo = new BoCliente();
-            
+            BoBeneficiario boBeneficiario = new BoBeneficiario();
+
+
             if (!this.ModelState.IsValid)
             {
-                List<string> erros = (from item in ModelState.Values
-                                      from error in item.Errors
-                                      select error.ErrorMessage).ToList();
+                //List<string> erros = (from item in ModelState.Values
+                //                      from error in item.Errors
+                //                      select error.ErrorMessage).ToList();
+
+                List<string> errosObjects = (from item in ModelState
+                                                     where item.Value.Errors.Count() > 0
+                                                     select "Erro no campo " +
+                                                         item.Key.ToString() + " - " +
+                                                         item.Value.Errors.First().ErrorMessage.ToString())
+                                                         .ToList();
 
                 Response.StatusCode = 400;
-                return Json(string.Join(Environment.NewLine, erros));
+                return Json(string.Join("<br><hr>", errosObjects));
             }
             else
             {
@@ -60,7 +70,15 @@ namespace WebAtividadeEntrevista.Controllers
                     Telefone = model.Telefone
                 });
 
-           
+                foreach (var Beneficiario in model.Beneficiarios)
+                {
+                    boBeneficiario.Incluir(new Beneficiario
+                    {
+                        Nome = Beneficiario.Nome,
+                        CPF = Beneficiario.CPF,
+                        IdCliente = model.Id
+                    });
+                }
                 return Json("Cadastro efetuado com sucesso");
             }
         }
@@ -69,7 +87,9 @@ namespace WebAtividadeEntrevista.Controllers
         public JsonResult Alterar(ClienteModel model)
         {
             BoCliente bo = new BoCliente();
-       
+            BoBeneficiario boBeneficiario = new BoBeneficiario();
+
+
             if (!this.ModelState.IsValid)
             {
                 List<string> erros = (from item in ModelState.Values
@@ -107,7 +127,7 @@ namespace WebAtividadeEntrevista.Controllers
                     Sobrenome = model.Sobrenome,
                     Telefone = model.Telefone
                 });
-                               
+
                 return Json("Cadastro alterado com sucesso");
             }
         }
@@ -116,7 +136,20 @@ namespace WebAtividadeEntrevista.Controllers
         public ActionResult Alterar(long id)
         {
             BoCliente bo = new BoCliente();
+            BoBeneficiario boBeneficiario = new BoBeneficiario();
             Cliente cliente = bo.Consultar(id);
+            List<Beneficiario> beneficiarios = boBeneficiario.Pesquisa(id);
+            List<BeneficiarioModel> beneficiariosmodel = new List<BeneficiarioModel>();
+
+            foreach (var beneficiario in beneficiarios )
+            {
+                beneficiariosmodel.Add(new BeneficiarioModel { 
+                    Id = beneficiario.Id,
+                    Nome = beneficiario.Nome,
+                    CPF = beneficiario.CPF,
+                    IdCliente = beneficiario.IdCliente
+                });
+            }
             Models.ClienteModel model = null;
 
             if (cliente != null)
@@ -133,7 +166,8 @@ namespace WebAtividadeEntrevista.Controllers
                     Nacionalidade = cliente.Nacionalidade,
                     Nome = cliente.Nome,
                     Sobrenome = cliente.Sobrenome,
-                    Telefone = cliente.Telefone
+                    Telefone = cliente.Telefone,
+                    Beneficiarios = beneficiariosmodel
                 };
 
             
