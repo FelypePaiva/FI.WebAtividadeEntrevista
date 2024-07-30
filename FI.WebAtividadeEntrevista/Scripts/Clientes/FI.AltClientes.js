@@ -81,7 +81,8 @@ $(document).ready(function () {
                         function (r) {
                             ModalDialog("Sucesso!", r.Mensagem)
                             IncluirBeneficiario(beneficiarioNome, beneficiarioCPF, r.idNovoRegistro);
-                            //window.location.href = urlRetorno;
+                            elementoParaAlterar = null;
+
                         }
                 });
 
@@ -115,6 +116,7 @@ $(document).ready(function () {
                             elementoParaAlterar.style.backgroundColor = "#fff";
                             $('#BeneficiarioNome').val('');
                             $('#BeneficiarioCPF').val('');
+                            elementoParaAlterar = null;
 
                         }
                 });
@@ -190,7 +192,6 @@ function listarNovosBeneficiarios() {
 }
 
 function listarNovosBeneficiariosArrayObjects() {
-    debugger;
     let elementos = listarNovosBeneficiarios();
 
     let retorno = [];
@@ -220,7 +221,7 @@ function listarTodosBeneficiariosArrayObjects() {
 }
 
 function existeMesmoCPFNaLista(cpf) {
-    debugger;
+    if (elementoParaAlterar != null && cpf == elementoParaAlterar.querySelector('.beneficiarioCPF').textContent.replaceAll('.', '').replaceAll('-', '')) return false
     let lista = listarTodosBeneficiariosArrayObjects();
     if (lista != null && lista.length > 0) {
         let retorno = lista.find((el) => el.CPF == cpf);

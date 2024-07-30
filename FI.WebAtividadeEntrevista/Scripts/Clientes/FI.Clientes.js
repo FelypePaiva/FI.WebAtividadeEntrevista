@@ -45,6 +45,8 @@ $(document).ready(function () {
                 IncluirBeneficiario(beneficiarioNome, beneficiarioCPF);
                 $('#BeneficiarioNome').val('');
                 $('#BeneficiarioCPF').val('');
+                elementoParaAlterar = null;
+
             } else {
                 ModalDialog("Ocorreu um erro", "Não é possivel Cadastrar este CPF pois ele já está presente na Lista!!!");
             }
@@ -56,6 +58,8 @@ $(document).ready(function () {
                 elementoParaAlterar.style.backgroundColor = "#fff";
                 $('#BeneficiarioNome').val('');
                 $('#BeneficiarioCPF').val('');
+                elementoParaAlterar = null;
+
             } else {
                 ModalDialog("Ocorreu um erro", "Não é possivel Cadastrar este CPF pois ele já está presente na Lista!!!");
             }
@@ -127,7 +131,6 @@ function listarNovosBeneficiarios() {
 }
 
 function listarNovosBeneficiariosArrayObjects() {
-    debugger;
     let elementos = listarNovosBeneficiarios();
 
     let retorno = [];
@@ -145,7 +148,6 @@ function listarTodosBeneficiarios() {
 }
 
 function listarTodosBeneficiariosArrayObjects() {
-    debugger;
     let elementos = listarTodosBeneficiarios();
 
     let retorno = [];
@@ -159,6 +161,7 @@ function listarTodosBeneficiariosArrayObjects() {
 
 function existeMesmoCPFNaLista(cpf) {
     debugger;
+    if (elementoParaAlterar != null && cpf == elementoParaAlterar.querySelector('.beneficiarioCPF').textContent.replaceAll('.', '').replaceAll('-', '')) return false
     let lista = listarTodosBeneficiariosArrayObjects();
     if (lista != null && lista.length > 0) {
         let retorno = lista.find((el) => el.CPF == cpf);
